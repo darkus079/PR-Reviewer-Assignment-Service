@@ -248,3 +248,75 @@ func (r *PostgresPullRequestRepository) setAssignedReviewersInTx(ctx context.Con
 
 	return nil
 }
+
+// GetPRCountByStatus возвращает количество PR по статусам
+func (r *PostgresPullRequestRepository) GetPRCountByStatus(ctx context.Context) (map[string]int, error) {
+	query := `
+		SELECT status, COUNT(*)
+		FROM pull_requests
+		GROUP BY status
+	`
+
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	stats := make(map[string]int)
+	for rows.Next() {
+		var status string
+		var count int
+		err := rows.Scan(&status, &count)
+		if err != nil {
+			return nil, err
+		}
+		stats[status] = count
+	}
+
+	return stats, rows.Err()
+}
+
+// GetAssignmentsByUsers возвращает количество назначений по пользователям
+func (r *PostgresPullRequestRepository) GetAssignmentsByUsers(ctx context.Context) (map[string]int, error) {
+	query := `
+		SELECT u.user_id, COUNT(prr.pull_request_id) as assignment_count
+		FROM users u
+		LEFT JOIN pr_reviewers prr ON u.user_id = prr.user_id
+		GROUP BY u.user_id
+		ORDER BY assignment_count DESC
+	`
+
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	stats := make(map[string]int)
+	for rows.Next() {
+		var userID string
+		var count int
+		err := rows.Scan(&userID, &count)
+		if err != nil {
+			return nil, err
+		}
+		stats[userID] = count
+	}
+
+	return stats, rows.Err()
+}
+
+// GetTeamPRCount возвращает количество PR для команды
+func (r *PostgresPullRequestRepository) GetTeamPRCount(ctx context.Context, teamName string) (int, error) {
+	query := `
+		SELECT COUNT(DISTINCT pr.pull_request_id)
+		FROM pull_requests pr
+		JOIN users u ON pr.author_id = u.user_id
+		WHERE u.team_name = $1
+	`
+
+	var count int
+	err := r.db.QueryRow(ctx, query, teamName).Scan(&count)
+	return count, err
+}
