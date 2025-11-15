@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"reviewer-assigner/internal/config"
+	"pr-reviewer-assignment-service/internal/config"
 )
 
 type DB struct {
