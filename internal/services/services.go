@@ -22,3 +22,9 @@ type PullRequestService interface {
 	MergePullRequest(ctx context.Context, prID string) error
 	ReassignReviewer(ctx context.Context, prID string, oldReviewerID string) error
 }
+
+type StatisticService interface {
+	GetAssignmentsByUsers(ctx context.Context) ([]*models.UserAssignmentStats, error)
+	GetPRCountByStatus(ctx context.Context) ([]*models.PRStatusStats, error)
+	GetTeamStatistics(ctx context.Context) ([]*models.TeamStats, error)
+}
