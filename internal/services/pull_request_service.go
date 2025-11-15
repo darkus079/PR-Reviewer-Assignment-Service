@@ -92,6 +92,20 @@ func (s *PullRequestServiceImpl) MergePullRequest(ctx context.Context, prID stri
 	return nil
 }
 
+func (s *PullRequestServiceImpl) GetUserPullRequests(ctx context.Context, userID string) ([]*models.PullRequestShort, error) {
+	err := s.userSvc.ValidateUserExists(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid user: %w", err)
+	}
+
+	prs, err := s.prRepo.GetPullRequestsByReviewer(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pull requests for user: %w", err)
+	}
+
+	return prs, nil
+}
+
 func (s *PullRequestServiceImpl) ReassignReviewer(ctx context.Context, prID string, oldReviewerID string) error {
 	pr, err := s.prRepo.GetPullRequestByID(ctx, prID)
 	if err != nil {
