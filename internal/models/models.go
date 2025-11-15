@@ -18,8 +18,10 @@ type TeamMember struct {
 }
 
 type Team struct {
-	TeamName string       `json:"team_name"`
-	Members  []TeamMember `json:"members"`
+	TeamName  string       `json:"team_name"`
+	Members   []TeamMember `json:"members"`
+	CreatedAt time.Time    `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time    `json:"updated_at" db:"updated_at"`
 }
 
 type PullRequest struct {
