@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"reviewer-assigner/internal/config"
-	"reviewer-assigner/internal/database"
+	"pr-reviewer-assignment-service/internal/config"
+	"pr-reviewer-assignment-service/internal/database"
 )
 
 func main() {
