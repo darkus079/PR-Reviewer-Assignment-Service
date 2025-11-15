@@ -137,3 +137,29 @@ func (r *PostgresTeamRepository) GetTeamWithMembers(ctx context.Context, teamNam
 	team.Members = members
 	return team, nil
 }
+
+func (r *PostgresTeamRepository) GetAllTeams(ctx context.Context) ([]*models.Team, error) {
+	query := `
+		SELECT team_name, created_at, updated_at
+		FROM teams
+		ORDER BY team_name
+	`
+
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var teams []*models.Team
+	for rows.Next() {
+		var team models.Team
+		err := rows.Scan(&team.TeamName, &team.CreatedAt, &team.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		teams = append(teams, &team)
+	}
+
+	return teams, rows.Err()
+}

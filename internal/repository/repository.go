@@ -26,6 +26,9 @@ type TeamRepository interface {
 
 	TeamExists(ctx context.Context, teamName string) (bool, error)
 	GetTeamWithMembers(ctx context.Context, teamName string) (*models.Team, error)
+
+	// Методы для статистики
+	GetAllTeams(ctx context.Context) ([]*models.Team, error)
 }
 
 type PullRequestRepository interface {
@@ -39,4 +42,9 @@ type PullRequestRepository interface {
 	PullRequestExists(ctx context.Context, prID string) (bool, error)
 	GetAssignedReviewers(ctx context.Context, prID string) ([]string, error)
 	SetAssignedReviewers(ctx context.Context, prID string, reviewers []string) error
+
+	// Методы для статистики
+	GetPRCountByStatus(ctx context.Context) (map[string]int, error)
+	GetAssignmentsByUsers(ctx context.Context) (map[string]int, error)
+	GetTeamPRCount(ctx context.Context, teamName string) (int, error)
 }
