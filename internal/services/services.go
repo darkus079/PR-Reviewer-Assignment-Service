@@ -11,3 +11,8 @@ type UserService interface {
 	ValidateUserExists(ctx context.Context, userID string) error
 	GetUserWithTeam(ctx context.Context, userID string) (*models.User, error)
 }
+
+type TeamService interface {
+	CreateTeamWithMembers(ctx context.Context, teamName string, members []models.TeamMember) (*models.Team, error)
+	GetTeamWithMembers(ctx context.Context, teamName string) (*models.Team, error)
+}
