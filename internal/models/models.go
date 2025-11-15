@@ -64,3 +64,22 @@ const (
 	PRStatusMerged = "MERGED"
 )
 
+// Statistic models
+type UserAssignmentStats struct {
+	UserID          string `json:"user_id"`
+	Username        string `json:"username"`
+	AssignmentCount int    `json:"assignment_count"`
+}
+
+type PRStatusStats struct {
+	Status string `json:"status"`
+	Count  int    `json:"count"`
+}
+
+type TeamStats struct {
+	TeamName        string `json:"team_name"`
+	MemberCount     int    `json:"member_count"`
+	ActiveMemberCount int  `json:"active_member_count"`
+	PRCount         int    `json:"pr_count"`
+}
+
