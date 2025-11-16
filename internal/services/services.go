@@ -21,6 +21,7 @@ type PullRequestService interface {
 	CreatePullRequest(ctx context.Context, pr *models.PullRequest) (*models.PullRequest, error)
 	MergePullRequest(ctx context.Context, prID string) error
 	ReassignReviewer(ctx context.Context, prID string, oldReviewerID string) error
+	GetUserPullRequests(ctx context.Context, userID string) ([]*models.PullRequestShort, error)
 }
 
 type StatisticService interface {
