@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 
@@ -51,10 +50,10 @@ func (s *UserServiceImpl) ValidateUserExists(ctx context.Context, userID string)
 func (s *UserServiceImpl) GetUserWithTeam(ctx context.Context, userID string) (*models.User, error) {
 	user, err := s.userRepo.GetUserByID(ctx, userID)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errors.New("user not found")
-		}
 		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+	if user == nil {
+		return nil, errors.New("user not found")
 	}
 
 	return user, nil
