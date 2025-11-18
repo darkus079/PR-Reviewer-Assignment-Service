@@ -34,13 +34,13 @@ func (h *Handler) CreateTeam(c *gin.Context) {
 }
 
 func (h *Handler) GetTeam(c *gin.Context) {
-	var req GetTeamRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": gin.H{"code": "INVALID_REQUEST", "message": err.Error()}})
+	teamName := c.Query("team_name")
+	if teamName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": gin.H{"code": "INVALID_REQUEST", "message": "team_name parameter is required"}})
 		return
 	}
 
-	team, err := h.teamService.GetTeamWithMembers(c.Request.Context(), req.TeamName)
+	team, err := h.teamService.GetTeamWithMembers(c.Request.Context(), teamName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": gin.H{"code": "TEAM_GET_FAILED", "message": err.Error()}})
 		return

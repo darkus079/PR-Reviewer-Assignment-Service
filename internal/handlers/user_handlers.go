@@ -38,19 +38,19 @@ func (h *Handler) SetUserActive(c *gin.Context) {
 }
 
 func (h *Handler) GetUserReviews(c *gin.Context) {
-	var req GetUserReviewRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": gin.H{"code": "INVALID_REQUEST", "message": err.Error()}})
+	userID := c.Query("user_id")
+	if userID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": gin.H{"code": "INVALID_REQUEST", "message": "user_id parameter is required"}})
 		return
 	}
 
-	err := h.userService.ValidateUserExists(c.Request.Context(), req.UserID)
+	err := h.userService.ValidateUserExists(c.Request.Context(), userID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": gin.H{"code": "USER_NOT_FOUND", "message": err.Error()}})
 		return
 	}
 
-	prs, err := h.prService.GetUserPullRequests(c.Request.Context(), req.UserID)
+	prs, err := h.prService.GetUserPullRequests(c.Request.Context(), userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": gin.H{"code": "PR_GET_FAILED", "message": err.Error()}})
 		return
