@@ -77,9 +77,8 @@ type PRStatusStats struct {
 }
 
 type TeamStats struct {
-	TeamName        string `json:"team_name"`
-	MemberCount     int    `json:"member_count"`
-	ActiveMemberCount int  `json:"active_member_count"`
-	PRCount         int    `json:"pr_count"`
+	TeamName          string `json:"team_name"`
+	MemberCount       int    `json:"member_count"`
+	ActiveMemberCount int    `json:"active_member_count"`
+	PRCount           int    `json:"pr_count"`
 }
-

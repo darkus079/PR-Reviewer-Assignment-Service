@@ -12,13 +12,13 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/server
 
-FROM alpine:latest
+FROM golang:1.25-alpine AS runtime
 
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates make
 
-WORKDIR /root/
+WORKDIR /app
 
-COPY --from=builder /app/main .
+COPY --from=builder /app /app
 
 EXPOSE 8080
 

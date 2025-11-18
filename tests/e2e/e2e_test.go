@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
@@ -47,7 +48,7 @@ func TestMain(m *testing.M) {
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
-				WithStartupTimeout(5)),
+				WithStartupTimeout(2*time.Minute)),
 	)
 	if err != nil {
 		log.Fatalf("failed to start postgres container: %v", err)
@@ -60,6 +61,16 @@ func TestMain(m *testing.M) {
 		log.Fatalf("failed to get connection string: %v", err)
 	}
 
+	host, err := pgContainer.Host(ctx)
+	if err != nil {
+		log.Fatalf("failed to resolve postgres host: %v", err)
+	}
+
+	mappedPort, err := pgContainer.MappedPort(ctx, "5432/tcp")
+	if err != nil {
+		log.Fatalf("failed to resolve postgres port: %v", err)
+	}
+
 	cfg := &config.Config{
 		Server: config.ServerConfig{
 			Port:         "8080",
@@ -67,8 +78,8 @@ func TestMain(m *testing.M) {
 			WriteTimeout: 30,
 		},
 		Database: config.DatabaseConfig{
-			Host:     "localhost",
-			Port:     "5432",
+			Host:     host,
+			Port:     mappedPort.Port(),
 			User:     "postgres",
 			Password: "postgres",
 			DBName:   "e2edb",
